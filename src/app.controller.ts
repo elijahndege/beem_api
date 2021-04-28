@@ -1,12 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Body, Controller, Get } from '@nestjs/common';
+import { MccMncCapture } from './MccMncCapture.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly mccMncCapture: MccMncCapture) { }
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('initial')
+  initialCrawl(
+    @Body('sourceId') sourceId: string
+  ): Promise<void | any[]> {
+    return this.mccMncCapture.initialCrawl(sourceId);
   }
 }
