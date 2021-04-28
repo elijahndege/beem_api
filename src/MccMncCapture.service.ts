@@ -35,4 +35,44 @@ export class MccMncCapture extends CaptureBase {
       throw new BadRequestException(`Error performing the initialCrawl on ${this.baseDomain}: ${error}`)
     }
   }
+  public async filterData(mcc: number, mnc: number, country: string): Promise<void | any[]> {
+    const fs = require('fs').promises;
+    try {
+      const stringifiedDara = await fs.readFile('mccmnc.json', 'utf8')
+      const dataArr = JSON.parse(stringifiedDara);
+
+      if (mcc && mnc) {
+        return dataArr.filter(data => {
+          return data.mobileCountryCode === mcc && data.mobileNetworkCode === mnc
+        });
+
+      }
+      if (mcc && country) {
+        return dataArr.filter(data => {
+          return data.mobileCountryCode === mcc && data.country === country
+        });
+
+      }
+      if (country) {
+        return dataArr.filter(data => {
+          return data.country === country;
+        });
+      }
+      if (mnc) {
+        return dataArr.filter(data => {
+          return data.mobileNetworkCode === mnc
+        });
+      }
+      if (mcc) {
+        return dataArr.filter(data => {
+          return data.mobileCountryCode === mcc
+        });
+      }
+
+
+      return dataArr;
+    } catch (err) {
+      console.error(err)
+    }
+  }
 }
